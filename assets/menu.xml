@@ -190,15 +190,7 @@
 					<key>Name</key>
 					<string>Jobs</string>
 				</dict>
-			</array>
-			<key>Expanded</key>
-			<integer>0</integer>
-			<key>Category name</key>
-			<string>Menu group</string>
-			<key>Name</key>
-			<string>More</string>
-		</dict>
-		<dict>
+				<dict>
 			<key>ControllerID</key>
 			<string>AppSettingsControllerID</string>
 			<key>Category name</key>
@@ -218,6 +210,14 @@
 			<key>Name</key>
 			<string>Credits</string>
 		</dict>
+			</array>
+			<key>Expanded</key>
+			<integer>0</integer>
+			<key>Category name</key>
+			<string>Menu group</string>
+			<key>Name</key>
+			<string>More</string>
+		</dict>		
 	</array>
 </dict>
 </plist>
