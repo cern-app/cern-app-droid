@@ -3,6 +3,15 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
+    <!--  
+    <com.jeremyfeinstein.slidingmenu.lib.SlidingMenu
+    xmlns:sliding="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/mainActivity_slidingMenu"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+    
+    -->
+    
     <ListView
         android:id="@+id/menuExpListView"
         android:layout_width="fill_parent"
@@ -10,6 +19,8 @@
         android:background="#3f4a5c" >
 
     </ListView>
+    
+    <!-- </com.jeremyfeinstein.slidingmenu.lib.SlidingMenu> --> 
 
 
 </LinearLayout>
