@@ -1,17 +1,13 @@
 package ch.cern.cern_app_droid;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
-import com.longevitysoft.android.xml.plist.PListXMLHandler;
-import com.longevitysoft.android.xml.plist.PListXMLParser;
+import android.util.Log;
+
 import com.longevitysoft.android.xml.plist.domain.NsArray;
 import com.longevitysoft.android.xml.plist.domain.NsDict;
 import com.longevitysoft.android.xml.plist.domain.PListObject;
 import com.longevitysoft.android.xml.plist.domain.PListObjectType;
-
-import android.content.Context;
-import android.util.Log;
 
 public class CernLiveMenuParser {
 	
@@ -57,29 +53,25 @@ public class CernLiveMenuParser {
 		
 		return rv;
 	}
-	
+
 	private ArrayList<MenuItem> getLiveMenuItems(NsArray data) {
 		ArrayList<MenuItem> rv = new ArrayList<MenuItem>();
-		
+
 		for (PListObject item : data) {
 			NsDict itemDict = (NsDict) item;
-			
-//			MenuItem m = new MenuItem();
-			String category = itemDict.getConfiguration("Category name").getValue(); 
-//			m.title = category;
-			
+
+			String category = itemDict.getConfiguration("Category name")
+					.getValue();
+
 			if (category.equals("Status")) {
 				rv.add(getStatusMenuItem(itemDict));
 			} else if (category.equals("News")) {
-				rv.addAll( getNewsMenuItemList(itemDict));
-				//m.items.addAll( getTweets ( itemDict.getConfigurationArray("Tweets") ) );
+				rv.addAll(getNewsMenuItemList(itemDict));
 			} else if (category.equals("Live Events")) {
-				//m.items.addAll( getLiveImage ( itemDict.getConfigurationArray("Images") ) );
+				//ToDo: fill in rest of categories
 			}
-			
-//			rv.add(m);
 		}
-		
+
 		return rv;
 	}
 	
@@ -109,20 +101,19 @@ public class CernLiveMenuParser {
 		return rv;
 	}
 	
-	private ArrayList<MenuItem> getLiveStatusMenuItems(NsArray arr) {
-		ArrayList<MenuItem> rv = new ArrayList<MenuItem>();
-		for (PListObject item : arr) {
-			if (item.getType() != PListObjectType.DICT) {
-				Log.d(TAG, "Wrong item in CERNLive Status data");
-			} else {
-				NsDict d = (NsDict) item;
-				MenuItem m = new MenuItem();
-				m.title = d.getConfiguration("Category name").getValue();
-			}
-			
-		}
-		return rv;
-	}
+//	private ArrayList<MenuItem> getLiveStatusMenuItems(NsArray arr) {
+//		ArrayList<MenuItem> rv = new ArrayList<MenuItem>();
+//		for (PListObject item : arr) {
+//			if (item.getType() != PListObjectType.DICT) {
+//				Log.d(TAG, "Wrong item in CERNLive Status data");
+//			} else {
+//				NsDict d = (NsDict) item;
+//				MenuItem m = new MenuItem();
+//				m.title = d.getConfiguration("Category name").getValue();
+//			}		
+//		}
+//		return rv;
+//	}
 	
 	private MenuItem getStatusMenuItem(NsDict dict) {
 		MenuItem rv = new MenuItem();
