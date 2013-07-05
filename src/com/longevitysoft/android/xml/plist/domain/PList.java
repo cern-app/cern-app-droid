@@ -192,6 +192,8 @@ public class PList {
 				stackCtxInArray = true;
 				stackCtxInDict = false;
 				break;
+			default:
+				break;
 			}
 		} else {
 			stackCtxInArray = false;

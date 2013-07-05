@@ -16,6 +16,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Scanner;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 /**
@@ -41,6 +42,7 @@ public class NsDate extends PListObject implements
 	 */
 	private SimpleDateFormat iso8601Format;
 
+	@SuppressLint("SimpleDateFormat")
 	public NsDate() {
 		setType(PListObjectType.DATE);
 		iso8601Format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
@@ -76,6 +78,7 @@ public class NsDate extends PListObject implements
 	 * com.longevitysoft.android.xml.plist.domain.IPListSimpleObject#setValue
 	 * (java.lang.String)
 	 */
+	@SuppressWarnings("deprecation")
 	@Override
 	public void setValue(java.lang.String val) {
 		// sniff date
