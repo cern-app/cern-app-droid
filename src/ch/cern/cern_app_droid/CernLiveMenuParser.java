@@ -9,7 +9,7 @@ import com.longevitysoft.android.xml.plist.domain.NsDict;
 import com.longevitysoft.android.xml.plist.domain.PListObject;
 import com.longevitysoft.android.xml.plist.domain.PListObjectType;
 
-public class CernLiveMenuParser {
+public abstract class CernLiveMenuParser {
 	
 	private static final String TAG = "CernLiveMenuParser";
 	
@@ -23,7 +23,7 @@ public class CernLiveMenuParser {
 	private static final String CATEGORY_LIVE_TWEET = "Tweet";
 	
 	
-	public ArrayList<MenuItem> getCernLiveMenu(NsDict map) {
+	public static ArrayList<MenuItem> getCernLiveMenu(NsDict map) {
 		NsArray items = map.getConfigurationArray("Root");
 		if (items == null) {
 			Log.e(TAG, "No menu contents");
@@ -32,7 +32,7 @@ public class CernLiveMenuParser {
 		return getCernLiveMenuItemList(items);
 	}	
 
-	private ArrayList<MenuItem> getCernLiveMenuItemList(NsArray items) {
+	private static ArrayList<MenuItem> getCernLiveMenuItemList(NsArray items) {
 		ArrayList<MenuItem> menuItems = new ArrayList<MenuItem>();
 		
 		for (PListObject item : items) {
@@ -45,7 +45,7 @@ public class CernLiveMenuParser {
 		return menuItems;
 	}
 	
-	private MenuItem getCernLiveMenuItem(NsDict dict) {
+	private static MenuItem getCernLiveMenuItem(NsDict dict) {
 		MenuItem rv = new MenuItem();
 		
 		rv.title = dict.getConfiguration("ExperimentName").getValue();
@@ -54,7 +54,7 @@ public class CernLiveMenuParser {
 		return rv;
 	}
 
-	private ArrayList<MenuItem> getLiveMenuItems(NsArray data) {
+	private static ArrayList<MenuItem> getLiveMenuItems(NsArray data) {
 		ArrayList<MenuItem> rv = new ArrayList<MenuItem>();
 
 		for (PListObject item : data) {
@@ -75,7 +75,7 @@ public class CernLiveMenuParser {
 		return rv;
 	}
 	
-	private ArrayList<MenuItem> getNewsMenuItemList(NsDict dict) {
+	private static ArrayList<MenuItem> getNewsMenuItemList(NsDict dict) {
 		ArrayList<MenuItem> rv = new ArrayList<MenuItem>();
 			
 		NsArray feeds = dict.getConfigurationArray("Feeds");
@@ -115,7 +115,7 @@ public class CernLiveMenuParser {
 //		return rv;
 //	}
 	
-	private MenuItem getStatusMenuItem(NsDict dict) {
+	private static MenuItem getStatusMenuItem(NsDict dict) {
 		MenuItem rv = new MenuItem();
 		rv.title = dict.getConfiguration("Category name").getValue();
 		//ToDo: set menu item 

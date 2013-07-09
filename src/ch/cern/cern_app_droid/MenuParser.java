@@ -103,8 +103,12 @@ public class MenuParser {
 		
 		if (category.equals("LIVE")) {
 			rv.title = "LIVE";
-			CernLiveMenuParser liveParser = new CernLiveMenuParser();
-			rv.items = liveParser.getCernLiveMenu(getDictFromFile("CERNLive.xml"));
+			rv.items = CernLiveMenuParser.getCernLiveMenu(getDictFromFile("CERNLive.xml"));
+			
+		} else if (category.equals("StaticInfo")) {
+			
+			rv.title = "About CERN";
+			rv.items = StaticInfoMenuParser.getStaticInfoMenu(getDictFromFile("StaticInformation.xml"));
 			
 		} else if (category.equals("Feed")) {
 			rv.categoryArgument = dict.getConfigurationWithDefault("Url",
@@ -131,7 +135,6 @@ public class MenuParser {
 			}
 		}
 		// ToDo: handle various categories
-
 		
 		return rv;
 	}
