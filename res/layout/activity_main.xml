@@ -3,24 +3,11 @@
     android:layout_height="fill_parent"
     android:orientation="vertical" >
 
-    <!--  
-    <com.jeremyfeinstein.slidingmenu.lib.SlidingMenu
-    xmlns:sliding="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/mainActivity_slidingMenu"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent" >
-    
-    -->
-    
-    <ListView
-        android:id="@+id/menuExpListView"
-        android:layout_width="fill_parent"
-        android:layout_height="match_parent"
-        android:background="#3f4a5c" >
+    <FrameLayout
+        android:id="@+id/main_contentFrame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
 
-    </ListView>
+    </FrameLayout>
     
-    <!-- </com.jeremyfeinstein.slidingmenu.lib.SlidingMenu> --> 
-
-
 </LinearLayout>

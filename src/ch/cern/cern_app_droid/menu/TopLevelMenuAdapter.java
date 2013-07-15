@@ -1,12 +1,14 @@
-package ch.cern.cern_app_droid;
+package ch.cern.cern_app_droid.menu;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 import android.content.Context;
 import android.database.DataSetObserver;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
@@ -15,75 +17,76 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.Transformation;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.LinearLayout.LayoutParams;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import ch.cern.cern_app_droid.MainActivity;
+import ch.cern.cern_app_droid.R;
 
-public class TopLevelMenuAdapter implements ListAdapter {
+public class TopLevelMenuAdapter extends ArrayAdapter<MenuItem> {
+	
+
+	private static final String TAG = "TopLevelMenuAdapter";
 
 	ArrayList<MenuItem> mItems;
-	Context mContext;
+	MainActivity mContext;
 	LayoutInflater mInflater;
 	SparseBooleanArray expanded; // Remembers whether top level menu item is expanded or not
 	
 	SparseArray<SecondLevelMenu> mSubMenus;
 	
-	public TopLevelMenuAdapter(Context context, LayoutInflater inflater, ArrayList<MenuItem> items) {
-		mItems = items;
-		mInflater = inflater;
-		mContext = context;
+	
+	public TopLevelMenuAdapter(Context context, int textViewResourceId,
+			List<MenuItem> objects) {
+		super(context, textViewResourceId, objects);
+		mItems = new ArrayList<MenuItem>();
+		mItems.addAll(objects);
+		mContext = (MainActivity) context;
 		mSubMenus = new SparseArray<SecondLevelMenu>();
 		expanded = new SparseBooleanArray();
+		mInflater = LayoutInflater.from(context);
 	}
 	
-	@Override
-	public int getCount() {
-		return mItems.size();
-	}
+//	public TopLevelMenuAdapter(MainActivity context, LayoutInflater inflater, ArrayList<MenuItem> items) {
+//		mItems = items;
+//		mInflater = inflater;
+//		mContext = context;
+//		mSubMenus = new SparseArray<SecondLevelMenu>();
+//		expanded = new SparseBooleanArray();
+//	}
+	
 
-	@Override
-	public MenuItem getItem(int position) {
-		return mItems.get(position);
-	}
-
-	@Override
-	public long getItemId(int position) {
-		return 0;
-	}
-
-	@Override
-	public int getItemViewType(int position) {
-		return 0;
-	}
 
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 		LinearLayout v;
 		
 		v = (LinearLayout) mInflater.inflate(R.layout.menu_toplevel_row, null);
-		//ToDo: Add own cache to make use of convertView ?
-		//		I don't think it's possible, or at least easy (we wouldn't know which part
-		//		of view to delete, as we add something to v
-
+		//ToDo: Add own cache to make use of convertView 
+		//		Possible with use of ViewHolder set as TAG for our views
 		
 		TextView t = (TextView) v.findViewById(R.id.menu_toplevel_title);
 		final ImageView arrow = (ImageView) v.findViewById(R.id.menu_toplevel_expandImage);
 		View onClickLayout = v.findViewById(R.id.menu_toplevel_onClickLayout);
 		MenuItem m = mItems.get(position);
 		t.setText(m.title);
+		ImageView i = (ImageView) v.findViewById(R.id.menu_toplevel_image);
 		
+		//Set image for menu item (if exists)
 		if (m.image != null && !m.image.isEmpty()) {
 			try {
 				InputStream is = mContext.getAssets().open("GUI/" + m.image);
 				Drawable d = Drawable.createFromStream(is, m.image);
-				ImageView i = (ImageView) v.findViewById(R.id.menu_toplevel_image);
 				i.setImageDrawable(d);
 				i.setVisibility(View.VISIBLE);
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+		} else {
+			i.setVisibility(View.GONE);			
 		}
 		
 		if (mSubMenus.get(position) == null) {
@@ -102,7 +105,8 @@ public class TopLevelMenuAdapter implements ListAdapter {
 						arrow.animate().rotation(0).start();
 					else
 						arrow.animate().rotation(90).start();
-					slm.toggle();					
+					slm.toggle();
+					Log.d(TAG, "TopLevelAdapter.onClick; subMenus == null");
 				}
 			});
 			
@@ -120,46 +124,14 @@ public class TopLevelMenuAdapter implements ListAdapter {
 						arrow.animate().rotation(0).start();
 					else
 						arrow.animate().rotation(90).start();
-					slm.toggle();					
+					slm.toggle();		
+					Log.d(TAG, "TopLevelAdapter.onClick; subMenus != null");
 				}
 			});
 		}
 		return v;
 	}
 
-	@Override
-	public int getViewTypeCount() {
-		return 1;
-	}
-
-	@Override
-	public boolean hasStableIds() {
-		return false;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		return mItems.isEmpty();
-	}
-
-	@Override
-	public void registerDataSetObserver(DataSetObserver observer) {
-	}
-
-	@Override
-	public void unregisterDataSetObserver(DataSetObserver observer) {
-	}
-
-	@Override
-	public boolean areAllItemsEnabled() {
-		return false;
-	}
-
-	@Override
-	public boolean isEnabled(int position) {
-		return false;
-	}	
-	
 	private class SecondLevelMenu extends LinearLayout {
 
 		boolean mVisible = true;
@@ -176,7 +148,7 @@ public class TopLevelMenuAdapter implements ListAdapter {
 		private void setElements(ArrayList<MenuItem> items) {
 			if (items.size() > 0) {
 				int i = 0;
-				for (MenuItem s : items) {
+				for (final MenuItem s : items) {
 					View v = mInflater.inflate(R.layout.menu_level2_row, null);
 					TextView zt = (TextView) v.findViewById(R.id.menu_level2_title);
 					View onClickView = v.findViewById(R.id.menu_level2_onClickLayout);
@@ -200,6 +172,14 @@ public class TopLevelMenuAdapter implements ListAdapter {
 							e.printStackTrace();
 						}
 					}
+					
+					onClickView.setOnClickListener(new OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							mContext.onMenuClick(s);							
+						}
+					});
 
 					addView(v);
 					
@@ -218,8 +198,12 @@ public class TopLevelMenuAdapter implements ListAdapter {
 									arrow.animate().rotation(90).start();
 								else
 									arrow.animate().rotation(0).start();
+								Log.d(TAG, "SecondLevel.onClick; items.size > 0");
+//								mContext.onMenuClick(s);
 							}
 						});
+					} else {
+						//ToDo: Set interface
 					}
 					i++;
 				}				

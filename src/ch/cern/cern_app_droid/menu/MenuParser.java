@@ -1,4 +1,4 @@
-package ch.cern.cern_app_droid;
+package ch.cern.cern_app_droid.menu;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -111,8 +111,8 @@ public class MenuParser {
 			rv.items = StaticInfoMenuParser.getStaticInfoMenu(getDictFromFile("StaticInformation.xml"));
 			
 		} else if (category.equals("Feed")) {
-			rv.categoryArgument = dict.getConfigurationWithDefault("Url",
-					new NsString("")).getValue();
+			rv.Action = new RssFeedAction(dict.getConfigurationWithDefault("Url",
+					new NsString("")).getValue());
 			
 		} else if (category.equals("Menu group")) {
 			NsArray items = dict.getConfigurationArray("Items");

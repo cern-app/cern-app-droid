@@ -1,4 +1,4 @@
-package ch.cern.cern_app_droid;
+package ch.cern.cern_app_droid.menu;
 
 import java.util.ArrayList;
 
