@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -30,6 +31,7 @@ public class MainActivity extends FragmentActivity  {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		getWindow().requestFeature(Window.FEATURE_INDETERMINATE_PROGRESS);
 		setContentView(R.layout.activity_main);
 
 		LayoutInflater li = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -82,11 +84,9 @@ public class MainActivity extends FragmentActivity  {
 
 	public void onMenuClick(MenuItem item) {
 		Log.d(TAG, "onItemClick()");
-//		Log.d(TAG, "item == null :: " + String.valueOf(item == null));
-//		Log.d(TAG, "item.Action == null :: " + String.valueOf(item.Action == null));
-//		Log.d(TAG, "item.Action.getFragment() == null :: " + String.valueOf(item.Action.getFragment() == null));
 		if (item != null && item.Action != null && item.Action.getFragment() != null) {
 			getFragmentManager().beginTransaction().replace(R.id.main_contentFrame, item.Action.getFragment()).commit();
+			mMenu.toggle();
 		}
 		
 	}
