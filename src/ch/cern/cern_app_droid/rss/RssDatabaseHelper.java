@@ -28,7 +28,7 @@ public class RssDatabaseHelper extends SQLiteOpenHelper {
 											+ COLUMN_DATE + " INTEGER NOT NULL DEFAULT (strftime('%s','now')), "
 											+ COLUMN_DESCRIPTION + " TEXT, "
 											+ COLUMN_IMAGE + " BLOB, "
-											+ COLUMN_READ + " SMALLINT NOT NULL DEFAULT 0"
+											+ COLUMN_READ + " SMALLINT NOT NULL DEFAULT 0" // 0 = false; 1 = true
 											+ " );";
 
 	public RssDatabaseHelper(Context context) {
