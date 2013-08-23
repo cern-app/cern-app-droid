@@ -21,4 +21,9 @@ public class RssFeedAction implements ItemAction {
 		return mFragment;
 	}
 
+	@Override
+	public void onReselected() {
+		mFragment.onResume();
+	}
+
 }

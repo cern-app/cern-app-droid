@@ -53,7 +53,6 @@ public class RssFeedFragment extends ListFragment implements RssReadListener, On
 	
 	public void setUrl(String url) {
 		mUrl = url;
-//		loadRss();
 	}
 	
 	@Override
@@ -97,11 +96,10 @@ public class RssFeedFragment extends ListFragment implements RssReadListener, On
 		loadRss();
 	}
 	
-
 	private void loadRss() {
 		if (!isNetworkAvailable()){
 			//Activity should be always attached at this point
-			Toast.makeText(getActivity() ,"No internet connexion", Toast.LENGTH_SHORT).show();
+			Toast.makeText(getActivity() ,"No internet connection", Toast.LENGTH_SHORT).show();
 			return;
 		}
 		getActivity().setProgressBarIndeterminateVisibility(true);
@@ -111,7 +109,10 @@ public class RssFeedFragment extends ListFragment implements RssReadListener, On
 
 	@Override
 	public void onRssReadSuccessfuly(RssFeed result) {
-		if (mAdapter != null) {
+		if (!isVisible()) {
+			return;
+		}
+		if (mAdapter != null && result.getItems().size() > 0) {
 			
 			ArrayList<RssItem> items = new ArrayList<RssItem>();
 			List<RssItemBean> readItems = result.getItems();
@@ -169,12 +170,9 @@ public class RssFeedFragment extends ListFragment implements RssReadListener, On
 	
 	private class RssFeedAdapter extends ArrayAdapter<RssItem> {
 		
-		private SparseArray<DownloadImageTask> imageDownloadJobs;
-
 		public RssFeedAdapter(Context context, int textViewResourceId,
 				List<RssItem> objects) {
 			super(context, textViewResourceId, objects);
-//			imageDownloadJobs = new SparseArray<RssFeedFragment.RssFeedAdapter.DownloadImageTask>();
 		}
 		
 		@Override
@@ -205,26 +203,8 @@ public class RssFeedFragment extends ListFragment implements RssReadListener, On
 				holder.img.setImageBitmap(item.getMiniature());
 				holder.img.setVisibility(View.VISIBLE);
 			} else {				
-//				if (bitmapCache.containsKey())
 				holder.img.setVisibility(View.GONE);
 			}
-			
-//			String desc = item.getDescription();
-//			if (desc != null) { //get image for 
-//				Matcher m = Pattern.compile("<img.+?src=[\"'](.+?)[\"'].+?>", Pattern.CASE_INSENSITIVE).matcher(desc);
-//				if (m.find()) {
-//					String img = m.group(1);
-//					if (imageDownloadJobs.get(position) != null) {
-//						imageDownloadJobs.get(position).cancel(true);
-//						imageDownloadJobs.delete(position);
-//					}
-//					imageDownloadJobs.put(position, new DownloadImageTask(holder.img, Long.valueOf(holder.img.getId())));
-//					imageDownloadJobs.get(position).execute(img);
-//					holder.img.setVisibility(View.INVISIBLE);
-//				} else {
-//					holder.img.setVisibility(View.GONE);
-//				}
-//			}
 			
 			return v;
 		}
@@ -264,25 +244,12 @@ public class RssFeedFragment extends ListFragment implements RssReadListener, On
 	}
 	
 	private class DownloadImageTask extends AsyncTask<String, Void, Bitmap> {
-		
-//	    ImageView mImage;
-//	    long mTag;
-	    String mFeedItemLink;
-//
-//	    public DownloadImageTask(ImageView bmImage, long tag) {
-//	        this.mImage = bmImage;
-//	        this.mTag = tag;
-//	    }
+
+		String mFeedItemLink;
 		
 		public DownloadImageTask(String feedItemLink) {
 			mFeedItemLink = feedItemLink;
 		}
-	    
-	    @Override
-	    protected void onPreExecute() {
-//	    	mImage.setVisibility(View.INVISIBLE);
-//	    	mImage.setImageDrawable(null);
-	    }
 	    
 	    @Override
 	    protected Bitmap doInBackground(String... urls) {
@@ -290,10 +257,7 @@ public class RssFeedFragment extends ListFragment implements RssReadListener, On
 	        if (bitmapCache.containsKey(url)) {
 	        	return bitmapCache.get(url);
 	        }
-//	        if (mTag == 0) {
-//	        	Log.d(TAG, "doInBackground: " + url);
-//	        }
-	        //temp = url;
+
 	        Bitmap bitmap = null;
 	        try {
 
@@ -319,10 +283,6 @@ public class RssFeedFragment extends ListFragment implements RssReadListener, On
 	    
 	    @Override
 	    protected void onPostExecute(Bitmap result) {
-//	        mImage.setImageBitmap(result);
-//	        mImage.setVisibility(View.VISIBLE);
-//	        if (mTag == 0)
-//	        	Log.d(TAG, "setting image [ " + temp +" ]");
 	    	notifyMiniatureDownloaded(mFeedItemLink, result);
 	    }
 	    

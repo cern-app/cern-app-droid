@@ -78,13 +78,18 @@ public class MainActivity extends FragmentActivity  {
 		if (mMenu.isMenuShowing()) {
 			mMenu.toggle();
 		} else {
-			super.onBackPressed();
+			if (getFragmentManager().getBackStackEntryCount() > 0) {
+				getFragmentManager().popBackStack();
+			} else {
+				super.onBackPressed();
+			}
 		}
 	}
 
 	public void onMenuClick(MenuItem item) {
 		Log.d(TAG, "onItemClick()");
 		if (item != null && item.Action != null && item.Action.getFragment() != null) {
+			setProgressBarIndeterminateVisibility(false);
 			getFragmentManager().beginTransaction().replace(R.id.main_contentFrame, item.Action.getFragment()).commit();
 			mMenu.toggle();
 		}

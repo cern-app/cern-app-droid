@@ -5,4 +5,5 @@ import android.app.Fragment;
 public interface ItemAction {
 
 	public Fragment getFragment();
+	public void onReselected();
 }
