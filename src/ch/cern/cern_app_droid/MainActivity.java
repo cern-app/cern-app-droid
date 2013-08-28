@@ -7,11 +7,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
 import android.view.Window;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ListView;
 import ch.cern.cern_app_droid.menu.MenuItem;
 import ch.cern.cern_app_droid.menu.MenuParser;
@@ -66,6 +65,14 @@ public class MainActivity extends FragmentActivity  {
 		mMenu.setMode(SlidingMenu.LEFT);
 
 		mMenu.setTouchModeAbove(SlidingMenu.TOUCHMODE_MARGIN);
+		mMenu.setOnTouchListener(new OnTouchListener() {
+			
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				Log.d("SlidingMenu", "OnTouch");
+				return false;
+			}
+		});
 		mMenu.setBehindScrollScale(1.0f);
 		mMenu.setBehindOffset(100);
 		mMenu.setFadeDegree(0.35f);
