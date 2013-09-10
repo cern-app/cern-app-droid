@@ -2,13 +2,18 @@ package ch.cern.cern_app_droid.static_information;
 
 import java.util.ArrayList;
 
-import android.app.Fragment;
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterViewFlipper;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -21,106 +26,110 @@ public class StaticInformationFragment extends Fragment {
 	private static final String TAG = "StaticInformationFragment";
 	
 	ArrayList<StaticInformationCard> mCardsList;
+	CardsPagerAdapter mAdapter;
 	
 	FlipViewController fView;
+	ViewPager vPager;
+
 	
 	public StaticInformationFragment() {
 		mCardsList = new ArrayList<StaticInformationCard>();
 	}
+	
+	@Override
+	public void onAttach(Activity activity) {		
+		super.onAttach(activity);
+	}
 
 	public void setCardList(ArrayList<StaticInformationCard> cardsList) {
-		mCardsList = cardsList;	
+		mCardsList.addAll(cardsList);	
 	}
 	
 	@Override
 	public void onPause() {
 		super.onPause();
-		fView.onPause();
 	}
 	
 	@Override
 	public void onResume() {
 		super.onResume();
-		fView.onResume();
+		Log.d(TAG, "onResume");
+		mAdapter.notifyDataSetChanged();
 	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
+		Log.d(TAG, "onCreateView()");
+		vPager = new ViewPager(inflater.getContext());
 		
-		fView = new FlipViewController(inflater.getContext(), FlipViewController.HORIZONTAL);
+		vPager.setId(mCardsList.get(0).hashCode());
+		vPager.setPageTransformer(true, new ZoomOutPageTransformer());
+		
 		if (getResources().getBoolean(R.bool.isTablet)) {
-			fView.setAdapter(new CardsAdapterTablet(inflater.getContext()));
+			mAdapter = new CardsPagerAdapter(getFragmentManager());
 		} else {
-			fView.setAdapter(new CardsAdapter(inflater.getContext()));			
+			mAdapter = new CardsPagerAdapter(getFragmentManager());
 		}
 		
-		return fView;
+		vPager.setAdapter(mAdapter);
+		return vPager;
 		
-//		View v = inflater.inflate(R.layout.staticinformation_card, null);
-//		
-//		StaticInformationCard card = mCardsList.get(0);
-//		
-//		((ImageView) v.findViewById(R.id.staticinformation_card_image)).setImageBitmap(card.getImageFile((getActivity())));
-//		((TextView) v.findViewById(R.id.staticinformation_card_titleTextView)).setText(card.getTitle());
-//		((TextView) v.findViewById(R.id.staticinformation_card_descriptionTextView)).setText(card.getDescription());
-
-//		return fView;
 	}
 	
-	private class CardsAdapter extends BaseAdapter {
+	private class ZoomOutPageTransformer implements ViewPager.PageTransformer {
+	    private static final float MIN_SCALE = 0.85f;
+	    private static final float MIN_ALPHA = 0.5f;
 
-		LayoutInflater inflater;
-		
-		public CardsAdapter(Context context) {
-			inflater = LayoutInflater.from(context);
+	    public void transformPage(View view, float position) {
+	        int pageWidth = view.getWidth();
+	        int pageHeight = view.getHeight();
+
+	        if (position < -1) { // [-Infinity,-1)
+	            // This page is way off-screen to the left.
+	            view.setAlpha(0);
+
+	        } else if (position <= 1) { // [-1,1]
+	            // Modify the default slide transition to shrink the page as well
+	            float scaleFactor = Math.max(MIN_SCALE, 1 - Math.abs(position));
+	            float vertMargin = pageHeight * (1 - scaleFactor) / 2;
+	            float horzMargin = pageWidth * (1 - scaleFactor) / 2;
+	            if (position < 0) {
+	                view.setTranslationX(horzMargin - vertMargin / 2);
+	            } else {
+	                view.setTranslationX(-horzMargin + vertMargin / 2);
+	            }
+
+	            // Scale the page down (between MIN_SCALE and 1)
+	            view.setScaleX(scaleFactor);
+	            view.setScaleY(scaleFactor);
+
+	            // Fade the page relative to its size.
+	            view.setAlpha(MIN_ALPHA +
+	                    (scaleFactor - MIN_SCALE) /
+	                    (1 - MIN_SCALE) * (1 - MIN_ALPHA));
+
+	        } else { // (1,+Infinity]
+	            // This page is way off-screen to the right.
+	            view.setAlpha(0);
+	        }
+	    }
+	}
+	
+	private class CardsPagerAdapter extends FragmentPagerAdapter {
+
+		public CardsPagerAdapter(FragmentManager fm) {
+			super(fm);
 		}
 		
 		@Override
 		public int getCount() {
 			return mCardsList.size();
 		}
-
-		@Override
-		public Object getItem(int position) {
-			return position;
-		}
-
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-			if (convertView == null) {
-				convertView = inflater.inflate(R.layout.staticinformation_card, null);
-				CardLayoutHolder holder = new CardLayoutHolder();
-				holder.titleTextView = 
-						(TextView) convertView.findViewById(R.id.staticinformation_card_tablet_titleTextView1);
-				holder.descriptionTextView = 
-						(TextView) convertView.findViewById(R.id.staticinformation_card_tablet_descriptionTextView1);
-				holder.imageImageView = 
-						(ImageView) convertView.findViewById(R.id.staticinformation_card_tablet_image1);
-				
-				convertView.setTag(holder);
-			}
-			
-			final StaticInformationCard card = mCardsList.get(position);
-			
-			CardLayoutHolder holder = (CardLayoutHolder) convertView.getTag();
-
-			holder.titleTextView.setText(card.getTitle());
-			holder.descriptionTextView.setText(card.getDescription());
-			holder.imageImageView.setImageBitmap(card.getImageFile(getActivity()));
 		
-			return convertView;
-		}
-		
-		private class CardLayoutHolder {
-			TextView titleTextView;
-			TextView descriptionTextView;
-			ImageView imageImageView;
+		@Override
+		public Fragment getItem(int pos) {
+			return StaticInformationCardFragment.newInstance(mCardsList.get(pos));
 		}
 		
 	}

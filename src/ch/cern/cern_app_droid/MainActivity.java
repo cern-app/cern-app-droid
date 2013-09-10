@@ -1,10 +1,11 @@
 package ch.cern.cern_app_droid;
 
-import android.app.Fragment;
-import android.app.FragmentManager;
+
 import android.content.Context;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -42,7 +43,7 @@ public class MainActivity extends FragmentActivity  {
 		// library or set it back after first expansion
 
 		MenuParser mp = new MenuParser(this);
-		final FragmentManager fragmentManager = getFragmentManager();
+		final FragmentManager fragmentManager = getSupportFragmentManager();
 		
 //		menuExpList.setAdapter(new TopLevelMenuAdapter(this, li, mp.getMenu()));
 		menuExpList.setAdapter(new TopLevelMenuAdapter(this, 0, mp.getMenu()));
@@ -97,7 +98,7 @@ public class MainActivity extends FragmentActivity  {
 		Log.d(TAG, "onItemClick()");
 		if (item != null && item.Action != null && item.Action.getFragment() != null) {
 			setProgressBarIndeterminateVisibility(false);
-			getFragmentManager().beginTransaction().replace(R.id.main_contentFrame, item.Action.getFragment()).commit();
+			getSupportFragmentManager().beginTransaction().replace(R.id.main_contentFrame, item.Action.getFragment()).commit();
 			mMenu.toggle();
 		}
 		

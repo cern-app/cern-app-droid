@@ -2,7 +2,7 @@ package ch.cern.cern_app_droid.menu;
 
 import java.util.ArrayList;
 
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 import android.util.Log;
 import ch.cern.cern_app_droid.static_information.StaticInformationCard;
 import ch.cern.cern_app_droid.static_information.StaticInformationFragment;
@@ -18,10 +18,9 @@ public class StaticInformationAction implements ItemAction {
 	public Fragment getFragment() {
 		Log.d(TAG, "Requested fragment (getFragment())");
 		
-		if (mFragment == null) {
-			mFragment = new StaticInformationFragment();
-			mFragment.setCardList(mCardsList);
-		}
+		
+		mFragment = new StaticInformationFragment();
+		mFragment.setCardList(mCardsList);
 		return mFragment;
 	}
 	

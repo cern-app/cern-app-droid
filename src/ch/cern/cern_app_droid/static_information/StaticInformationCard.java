@@ -39,7 +39,11 @@ public class StaticInformationCard {
 		return mTitle;
 	}
 	
-	private Bitmap getBitmapFromAsset(Context context, String strName)
+	public String getImageFilePath() {
+		return mImageFile;
+	}
+	
+	public static Bitmap getBitmapFromAsset(Context context, String strName)
     {
         AssetManager assetManager = context.getAssets();
         InputStream istr = null;
@@ -51,4 +55,5 @@ public class StaticInformationCard {
         Bitmap bitmap = BitmapFactory.decodeStream(istr);
         return bitmap;
     }
+
 }

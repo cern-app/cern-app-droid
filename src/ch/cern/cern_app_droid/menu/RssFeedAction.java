@@ -1,7 +1,7 @@
 package ch.cern.cern_app_droid.menu;
 
 import ch.cern.cern_app_droid.rss.RssFeedFragment;
-import android.app.Fragment;
+import android.support.v4.app.Fragment;
 
 public class RssFeedAction implements ItemAction {
 	
