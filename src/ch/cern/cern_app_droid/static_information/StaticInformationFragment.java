@@ -3,32 +3,25 @@ package ch.cern.cern_app_droid.static_information;
 import java.util.ArrayList;
 
 import android.app.Activity;
-import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterViewFlipper;
-import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 import ch.cern.cern_app_droid.R;
-
-import com.aphidmobile.flip.FlipViewController;
 
 public class StaticInformationFragment extends Fragment {
 	
 	private static final String TAG = "StaticInformationFragment";
 	
 	ArrayList<StaticInformationCard> mCardsList;
-	CardsPagerAdapter mAdapter;
+	PagerAdapter mAdapter;
 	
-	FlipViewController fView;
 	ViewPager vPager;
 
 	
@@ -54,7 +47,7 @@ public class StaticInformationFragment extends Fragment {
 	public void onResume() {
 		super.onResume();
 		Log.d(TAG, "onResume");
-		mAdapter.notifyDataSetChanged();
+		
 	}
 	
 	@Override
@@ -67,9 +60,9 @@ public class StaticInformationFragment extends Fragment {
 		vPager.setPageTransformer(true, new ZoomOutPageTransformer());
 		
 		if (getResources().getBoolean(R.bool.isTablet)) {
-			mAdapter = new CardsPagerAdapter(getFragmentManager());
+			mAdapter = new CardsAdapterTablet(inflater);
 		} else {
-			mAdapter = new CardsPagerAdapter(getFragmentManager());
+			mAdapter = new CardsPagerAdapter(inflater);
 		}
 		
 		vPager.setAdapter(mAdapter);
@@ -116,77 +109,108 @@ public class StaticInformationFragment extends Fragment {
 	    }
 	}
 	
-	private class CardsPagerAdapter extends FragmentPagerAdapter {
+	private class CardsPagerAdapter extends PagerAdapter {
 
-		public CardsPagerAdapter(FragmentManager fm) {
-			super(fm);
+		LayoutInflater inflater;
+		ArrayList<View> mConvertedViews;
+		
+		public CardsPagerAdapter(LayoutInflater inflater) {
+			this.inflater = inflater;
+			mConvertedViews = new ArrayList<View>();
 		}
 		
 		@Override
 		public int getCount() {
 			return mCardsList.size();
 		}
-		
+
 		@Override
-		public Fragment getItem(int pos) {
-			return StaticInformationCardFragment.newInstance(mCardsList.get(pos));
+		public boolean isViewFromObject(View view, Object object) {
+			return (view == ((View) object));
 		}
 		
+		@Override
+		public Object instantiateItem(ViewGroup container, int position) {
+			View v;
+			if ( mConvertedViews.isEmpty() ) {
+				v = inflater.inflate(R.layout.staticinformation_card, null);
+				Holder holder = new Holder();
+				holder.title = (TextView) v.findViewById(R.id.staticinformation_card_tablet_titleTextView1); 
+				holder.description = (TextView) v.findViewById(R.id.staticinformation_card_tablet_descriptionTextView1);
+				holder.image = (ImageView) v.findViewById(R.id.staticinformation_card_tablet_image1);
+				v.setTag(holder);
+			} else {
+				v = mConvertedViews.remove(0);
+			}
+			Holder holder = (Holder) v.getTag();
+			
+			StaticInformationCard card = mCardsList.get(position);
+			holder.title.setText(card.getTitle());
+			holder.description.setText(card.getDescription());
+			holder.image.setImageBitmap(card.getImageFile(inflater.getContext()));
+			
+			container.addView(v);
+			return v;
+		}
+		
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+			mConvertedViews.add((View) object);
+			container.removeView((View) object);
+		}
+		
+		private class Holder {
+			public TextView title;
+			public TextView description;
+			public ImageView image;
+		}
 	}
 	
-	private class CardsAdapterTablet extends BaseAdapter {
+	private class CardsAdapterTablet extends PagerAdapter {
 
 		LayoutInflater inflater;
+		ArrayList<View> mConvertedViews;
 		
-		public CardsAdapterTablet(Context context) {
-			inflater = LayoutInflater.from(context);
+		public CardsAdapterTablet(LayoutInflater inflater) {
+			this.inflater = inflater;
+			mConvertedViews = new ArrayList<View>();
 		}
 		
 		@Override
 		public int getCount() {
-			Log.d(TAG, "mCardsList.size() = " + mCardsList.size());
-			Log.d(TAG, "count: " + (mCardsList.size() / 2 + (mCardsList.size() % 2)));
 			return mCardsList.size() / 2 + (mCardsList.size() % 2);
 		}
 
 		@Override
-		public Object getItem(int position) {
-			return position;
-		}
+		public Object instantiateItem(ViewGroup container, int position) {
 
-		@Override
-		public long getItemId(int position) {
-			return position;
-		}
-
-		@Override
-		public View getView(int position, View convertView, ViewGroup parent) {
-
-			if (convertView == null) {
-				convertView = inflater.inflate(R.layout.staticinformation_card_tablet, null);
-				CardLayoutHolder holder = new CardLayoutHolder();
+			View v;
+			if ( mConvertedViews.isEmpty() ) {
+				v = inflater.inflate(R.layout.staticinformation_card_tablet, null);
+				Holder holder = new Holder();
 				holder.titleTextView1 = 
-						(TextView) convertView.findViewById(R.id.staticinformation_card_tablet_titleTextView1);
-				holder.titleTextView1.setText("Tytul1");
+						(TextView) v.findViewById(R.id.staticinformation_card_tablet_titleTextView1);
 				holder.descriptionTextView1 = 
-						(TextView) convertView.findViewById(R.id.staticinformation_card_tablet_descriptionTextView1);
+						(TextView) v.findViewById(R.id.staticinformation_card_tablet_descriptionTextView1);
 				holder.imageImageView1 = 
-						(ImageView) convertView.findViewById(R.id.staticinformation_card_tablet_image1);
+						(ImageView) v.findViewById(R.id.staticinformation_card_tablet_image1);
 				holder.titleTextView2 = 
-						(TextView) convertView.findViewById(R.id.staticinformation_card_tablet_titleTextView2);
+						(TextView) v.findViewById(R.id.staticinformation_card_tablet_titleTextView2);
 				holder.descriptionTextView2 = 
-						(TextView) convertView.findViewById(R.id.staticinformation_card_tablet_descriptionTextView2);
+						(TextView) v.findViewById(R.id.staticinformation_card_tablet_descriptionTextView2);
 				holder.imageImageView2 = 
-						(ImageView) convertView.findViewById(R.id.staticinformation_card_tablet_image2);
+						(ImageView) v.findViewById(R.id.staticinformation_card_tablet_image2);
 				
-				convertView.setTag(holder);
+				v.setTag(holder);
+			} else {
+				v = mConvertedViews.remove(0);
 			}
 			
-			CardLayoutHolder holder = (CardLayoutHolder) convertView.getTag();
+			Holder holder = (Holder) v.getTag();
 
 			final StaticInformationCard card1 = mCardsList.get(2*position);
 
-			holder.titleTextView1.setText("title1: " + card1.getTitle());
+			holder.titleTextView1.setText(card1.getTitle());
 			holder.descriptionTextView1.setText(card1.getDescription());
 			holder.imageImageView1.setImageBitmap(card1.getImageFile(getActivity()));
 			
@@ -195,7 +219,7 @@ public class StaticInformationFragment extends Fragment {
 				holder.titleTextView2.setVisibility(View.VISIBLE);
 				holder.descriptionTextView2.setVisibility(View.VISIBLE);
 				holder.imageImageView2.setVisibility(View.VISIBLE);
-				holder.titleTextView2.setText("title2: " + card2.getTitle());
+				holder.titleTextView2.setText(card2.getTitle());
 				holder.descriptionTextView2.setText(card2.getDescription());
 				holder.imageImageView2.setImageBitmap(card2.getImageFile(getActivity()));
 			} else {
@@ -203,21 +227,29 @@ public class StaticInformationFragment extends Fragment {
 				holder.descriptionTextView2.setVisibility(View.INVISIBLE);
 				holder.imageImageView2.setVisibility(View.INVISIBLE);
 			}
-		
-			return convertView;
+			
+			container.addView(v);
+			return v;
 		}
 		
-		private class CardLayoutHolder {
+		@Override
+		public boolean isViewFromObject(View view, Object object) {
+			return (view == (View) object);
+		}
+		
+		@Override
+		public void destroyItem(ViewGroup container, int position, Object object) {
+			mConvertedViews.add((View) object);
+			container.removeView((View) object);
+		}
+		
+		private class Holder {
 			TextView titleTextView1;
 			TextView descriptionTextView1;
 			ImageView imageImageView1;
 			TextView titleTextView2;
 			TextView descriptionTextView2;
 			ImageView imageImageView2;
-		}
-		
+		}		
 	}
-	
-	
-
 }
