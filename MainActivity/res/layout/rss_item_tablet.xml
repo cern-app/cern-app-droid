@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/LinearLayout1"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="2" >
+
+    <LinearLayout
+        android:id="@+id/rss_item_tablet_top_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:divider="@drawable/staticinformation_divider"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:weightSum="2" >
+
+        <include
+            android:id="@+id/rss_item_tablet_top_left"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|top"
+            android:layout_weight="1"
+            layout="@layout/rss_item_tablet_cell" />
+
+        <include
+            android:id="@+id/rss_item_tablet_top_right"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|top"
+            android:layout_weight="1"
+            layout="@layout/rss_item_tablet_cell" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/rss_item_tablet_bottom_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <include
+            android:id="@+id/rss_item_tablet_bottom_left"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="center|top"
+            android:layout_weight="1"
+            layout="@layout/rss_item_tablet_cell" />
+
+        <include
+            android:id="@+id/rss_item_tablet_bottom_right"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            layout="@layout/rss_item_tablet_cell" />
+
+    </LinearLayout>
+
+</LinearLayout>
