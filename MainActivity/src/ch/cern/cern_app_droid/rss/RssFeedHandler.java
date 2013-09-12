@@ -23,8 +23,8 @@ import ch.cern.cern_app_droid.rss.RssHandlerListener.RssHandlerError;
 public class RssFeedHandler implements RssFeedRetrieverListener {
 	
 	private static final String TAG = "RssFeedHandler";
-	private static final String READABILITY_SERVICE=""; //ToDo: fill with proper url, obfuscate
-	private static final String THUMBNAIL_SERVICE="http://cernapp.cern.ch/cgi-bin/thumbnail.py?url="; // ToDo: fill with proper url, obfuscate
+	private static final String READABILITY_SERVICE="";
+	private static final String THUMBNAIL_SERVICE="";
 	
 	RssHandlerListener mListener;
 	boolean mIsDownloadingFeed;
