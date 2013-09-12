@@ -1,12 +1,12 @@
 package ch.cern.cern_app_droid.menu;
 
-import ch.cern.cern_app_droid.rss.RssFeedFragment;
+import ch.cern.cern_app_droid.rss.RssFeedFragmentPhone;
 import android.support.v4.app.Fragment;
 
 public class RssFeedAction implements ItemAction {
 	
 	String mUrl;
-	RssFeedFragment mFragment;
+	RssFeedFragmentPhone mFragment;
 
 	public RssFeedAction(String feedUrl) {
 		mUrl = feedUrl;
@@ -15,7 +15,7 @@ public class RssFeedAction implements ItemAction {
 	@Override
 	public Fragment getFragment() {
 		if (mFragment == null) {
-			mFragment = new RssFeedFragment();
+			mFragment = new RssFeedFragmentPhone();
 			mFragment.setUrl(mUrl);
 		}
 		return mFragment;

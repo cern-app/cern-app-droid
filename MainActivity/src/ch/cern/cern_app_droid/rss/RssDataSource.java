@@ -1,11 +1,10 @@
 package ch.cern.cern_app_droid.rss;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.horrabin.horrorss.RssItemBean;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -84,8 +83,10 @@ public class RssDataSource {
 					r.setDescription(cursor.getString(cursor.getColumnIndexOrThrow(RssDatabaseHelper.COLUMN_DESCRIPTION)));
 					try {
 						byte[] image = cursor.getBlob(cursor.getColumnIndexOrThrow(RssDatabaseHelper.COLUMN_IMAGE));
-						r.setMiniature(BitmapFactory.decodeByteArray(image, 0, image.length));
-					} catch (Exception e) {						
+						ByteArrayInputStream is = new ByteArrayInputStream(image);
+						r.setMiniature(BitmapFactory.decodeStream(is));
+					} catch (Exception e) {	
+						Log.d(TAG, "Error while decoding image from blob");
 					}
 					r.setPubDate(new Date(cursor.getInt(cursor.getColumnIndexOrThrow(RssDatabaseHelper.COLUMN_DATE))));
 					r.setRead(cursor.getInt(cursor.getColumnIndexOrThrow(RssDatabaseHelper.COLUMN_READ)) == 1);
@@ -111,7 +112,7 @@ public class RssDataSource {
 	
 	public void clearFeed(String feed) {
 		mDatabase = mHelper.getWritableDatabase();
-		mDatabase.delete(RssDatabaseHelper.TABLE_NAME, null, null);
+		mDatabase.delete(RssDatabaseHelper.TABLE_NAME, RssDatabaseHelper.COLUMN_FEED_NAME + "=?", new String[]{feed});
 		mDatabase.close();
 	}
 	
