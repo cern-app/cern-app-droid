@@ -24,7 +24,6 @@ public class RssFeedRetriever extends AsyncTask<Void, Integer, RssFeed> {
 		Log.d(TAG, "Getting feed from " + mUrl);
 		try {
 			RssFeed feed = rss.load();
-			//ToDo: manually set http connection and lower timeout
 			return feed;
 		} catch (Exception e) {
 			e.printStackTrace();

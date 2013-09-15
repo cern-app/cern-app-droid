@@ -11,6 +11,7 @@ public interface RssHandlerListener {
 	public void onListUpdated(List<RssItem> items);
 	public void onError(RssHandlerError error);
 	public void onImageDownloaded(int position, Bitmap image);
+	public void onDescriptionUpdated(int position, String newDescription);
 
 	
 }

@@ -2,6 +2,7 @@ package ch.cern.cern_app_droid.menu;
 
 import java.util.ArrayList;
 
+import android.content.Context;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import ch.cern.cern_app_droid.static_information.StaticInformationCard;
@@ -15,7 +16,7 @@ public class StaticInformationAction implements ItemAction {
 	private StaticInformationFragment mFragment;
 
 	@Override
-	public Fragment getFragment() {
+	public Fragment getFragment(Context context) {
 		Log.d(TAG, "Requested fragment (getFragment())");
 		
 		

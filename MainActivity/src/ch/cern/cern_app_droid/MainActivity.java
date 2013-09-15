@@ -96,9 +96,9 @@ public class MainActivity extends FragmentActivity  {
 
 	public void onMenuClick(MenuItem item) {
 		Log.d(TAG, "onItemClick()");
-		if (item != null && item.Action != null && item.Action.getFragment() != null) {
+		if (item != null && item.Action != null && item.Action.getFragment(this) != null) {
 			setProgressBarIndeterminateVisibility(false);
-			getSupportFragmentManager().beginTransaction().replace(R.id.main_contentFrame, item.Action.getFragment()).commit();
+			getSupportFragmentManager().beginTransaction().replace(R.id.main_contentFrame, item.Action.getFragment(this)).commit();
 			mMenu.toggle();
 		}
 		

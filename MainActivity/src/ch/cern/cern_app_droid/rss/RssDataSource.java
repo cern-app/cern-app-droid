@@ -36,16 +36,17 @@ public class RssDataSource {
 	}
 	
 	public void insertItem(RssItem r, String feed) {
-		mDatabase = mHelper.getWritableDatabase();
+		try {
+			mDatabase = mHelper.getWritableDatabase();
 		
-		insertToOpenDatabase(r, feed);
+			insertToOpenDatabase(r, feed);
 		
-		mDatabase.close();
+			mDatabase.close();
+		} catch (Exception e) 
+		{ }
 	}
 	
 	private void insertToOpenDatabase(RssItem r, String feed) {
-		
-		Log.d(TAG, "inserting to database (feed: " + feed);
 		
 		ContentValues v = new ContentValues();
 		
@@ -53,7 +54,7 @@ public class RssDataSource {
 		v.put(RssDatabaseHelper.COLUMN_TITLE, r.getTitle());
 		v.put(RssDatabaseHelper.COLUMN_LINK, r.getLink());
 		v.put(RssDatabaseHelper.COLUMN_DATE, r.getPubDate().getTime()); //Storing date as 64 bit integer 
-		v.put(RssDatabaseHelper.COLUMN_DESCRIPTION, r.getDescription());
+		v.put(RssDatabaseHelper.COLUMN_DESCRIPTION, ""); // r.getDescription());
 		Bitmap miniature = r.getMiniature();
 		if (miniature != null) {
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -64,18 +65,15 @@ public class RssDataSource {
 		v.put(RssDatabaseHelper.COLUMN_IMAGE, r.getTitle());
 		
 		mDatabase.insert(RssDatabaseHelper.TABLE_NAME, null, v);
-		Log.v(TAG, "inserted ( " + r.getTitle() + " : " + r.getLink() + ")" );
 	}
 	
 	public List<RssItem> getAllItems(String feed) {
 		List<RssItem> rv = new ArrayList<RssItem>();
 		mDatabase = mHelper.getReadableDatabase();
 		
-		Log.d(TAG, "getAllItems(); got readable database ");
 		Cursor cursor = mDatabase.query(RssDatabaseHelper.TABLE_NAME, null, RssDatabaseHelper.COLUMN_FEED_NAME + "=?", 
 				new String[] { feed }, null, null, null);
 		if (cursor.moveToFirst()) {
-			Log.d(TAG, "cursor has elements ");
 			do {
 				RssItem r = new RssItem();
 					r.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(RssDatabaseHelper.COLUMN_TITLE)));
@@ -93,7 +91,6 @@ public class RssDataSource {
 						
 				
 				rv.add(r);
-				Log.v(TAG, "added item, title: " + r.getTitle());
 			} while (cursor.moveToNext());
 		}
 		
@@ -117,12 +114,9 @@ public class RssDataSource {
 	}
 	
 	public void replaceFeed(List<RssItem> items, String feed) {
-		Log.d(TAG, "Replacing feed");
 		clearFeed(feed);
 		
 		mDatabase = mHelper.getWritableDatabase();
-		
-		Log.d(TAG, "Got writeable database: " + mDatabase);
 		
 		for (RssItem r : items) {
 			insertToOpenDatabase(r, feed);
@@ -149,6 +143,25 @@ public class RssDataSource {
 		}
 		
 		mDatabase.update(RssDatabaseHelper.TABLE_NAME, v, 
+				RssDatabaseHelper.COLUMN_FEED_NAME + "=? AND " + RssDatabaseHelper.COLUMN_LINK + "=?" , // WHERE 
+				new String[] { feed, link }); //WHERE parameters
+		
+		mDatabase.close();
+	}
+	
+	public void updateItemDescription(String feed, String link, String description) {
+		if (link.isEmpty() || description.isEmpty() || feed.isEmpty()) {
+			Log.d(TAG, "link: "+ link+ "desc: " +description + "feed: " + feed);
+			return;
+		}
+	
+		mDatabase = mHelper.getWritableDatabase();
+		
+		ContentValues v = new ContentValues();		
+		
+		v.put(RssDatabaseHelper.COLUMN_DESCRIPTION, description);		
+		
+		int r = mDatabase.update(RssDatabaseHelper.TABLE_NAME, v, 
 				RssDatabaseHelper.COLUMN_FEED_NAME + "=? AND " + RssDatabaseHelper.COLUMN_LINK + "=?" , // WHERE 
 				new String[] { feed, link }); //WHERE parameters
 		

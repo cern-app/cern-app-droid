@@ -70,6 +70,8 @@ public class StaticInformationFragment extends Fragment {
 		
 	}
 	
+	//source: https://developer.android.com/training/animation/screen-slide.html
+	//licence: Creative Commons Attribution 2.5 (as per footer)
 	private class ZoomOutPageTransformer implements ViewPager.PageTransformer {
 	    private static final float MIN_SCALE = 0.85f;
 	    private static final float MIN_ALPHA = 0.5f;

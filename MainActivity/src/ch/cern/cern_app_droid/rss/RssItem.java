@@ -16,7 +16,8 @@ public class RssItem extends RssItemBean {
 	public RssItem(RssItemBean item) {
 		this.setAuthor(item.getAuthor());
 		this.setCategory(item.getCategory());
-		this.setDescription(item.getDescription());
+//		this.setDescription(item.getDescription());
+		this.setDescription("");
 		this.setLink(item.getLink());
 		this.setPubDate(item.getPubDate());
 		this.setTitle(item.getTitle());

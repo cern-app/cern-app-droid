@@ -19,6 +19,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import ch.cern.cern_app_droid.R;
 import ch.cern.cern_app_droid.Utils;
 
@@ -28,30 +29,25 @@ public class RssFeedFragmentPhone extends ListFragment implements OnItemClickLis
 
 	ArrayAdapter<RssItem> mAdapter;
 	String mUrl;
-	RssFeedHandler mRssFeedHandler;
+	RssFeedHandler mRssFeedHandler;	
 	
-	
-	// on Click listener for list view
 	@Override
 	public void onActivityCreated(Bundle savedInstanceState) {
 		super.onActivityCreated(savedInstanceState);
 		getListView().setOnItemClickListener(this);
 	}	
 	
-	public void setUrl(String url) {
-		mUrl = url;
-	}
-	
 	@Override
 	public void onAttach(Activity activity) {
 		super.onAttach(activity);
 
-		Log.d(TAG, "onAttach(); mUrl = " + mUrl);
 		
 		mAdapter = new RssFeedAdapter(activity, 0, new ArrayList<RssItem>());
 
 		setListAdapter(mAdapter);
 		
+		mUrl = getArguments().getString(RssHelper.URL);
+		Log.d(TAG, "onAttach(); mUrl = " + mUrl);
 		mRssFeedHandler = new RssFeedHandler(mUrl);
 		mRssFeedHandler.setRssHandlerListener(this);
 		mRssFeedHandler.startWork(activity);
@@ -131,7 +127,10 @@ public class RssFeedFragmentPhone extends ListFragment implements OnItemClickLis
 
 	@Override
 	public void onError(RssHandlerError error) {
-		
+		Activity a = getActivity();
+		if (a != null) {
+			Toast.makeText(a, "No internet connection", Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	@Override
@@ -139,17 +138,17 @@ public class RssFeedFragmentPhone extends ListFragment implements OnItemClickLis
 		mAdapter.getItem(position).setMiniature(image);
 		if (!isVisible())
 			return;
-//		int firstVisible = getListView().getFirstVisiblePosition();
-//		if (position >= firstVisible
-//				&& position <= firstVisible + getListView().getChildCount()) {
-		mAdapter.notifyDataSetChanged();
-		
+		mAdapter.notifyDataSetChanged();		
 	}
-
 	
 	@Override
 	public void onDetach() {
 		super.onDetach();
 		mRssFeedHandler.cancel();
+	}
+	
+	@Override
+	public void onDescriptionUpdated(int position, String newDescription) {
+		mAdapter.notifyDataSetChanged();		
 	}
 }
