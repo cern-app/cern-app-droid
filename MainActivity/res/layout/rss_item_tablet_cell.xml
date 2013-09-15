@@ -1,13 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:layout_height="wrap_content"
+    android:padding="5dp">
 
     <TextView
         android:id="@+id/rss_tablet_cell_Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
         android:gravity="center"
         android:text="Large Text"
         android:textAppearance="?android:attr/textAppearanceMedium"
@@ -17,16 +19,37 @@
         android:id="@+id/rss_tablet_cell_Time"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@id/rss_tablet_cell_Title"
         android:gravity="right"
         android:maxLines="1"
         android:text="Small Text"
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="#9293FF" />
 
-    <com.triposo.barone.EllipsizingTextView
-        android:id="@+id/rss_tablet_cell_webView"
+    <TextView
+        android:id="@+id/rss_tablet_cell_Description"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:scrollbars="none" />
+        android:layout_below="@id/rss_tablet_cell_Time"
+        android:ellipsize="end"
+        android:text="dasdasd" />
+    
+    <ImageView
+        android:id="@+id/rss_tablet_cell_Image"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@id/rss_tablet_cell_Time"
+        android:scaleType="fitCenter"
+        android:src="@drawable/ic_launcher" />
 
-</LinearLayout>
+    <ProgressBar
+        android:id="@+id/rss_tablet_cell_progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:visibility="gone" />
+
+</RelativeLayout>

@@ -114,11 +114,14 @@ public class RssDataSource {
 	}
 	
 	public void replaceFeed(List<RssItem> items, String feed) {
+		
 		clearFeed(feed);
 		
 		mDatabase = mHelper.getWritableDatabase();
 		
 		for (RssItem r : items) {
+			if (DatabaseUtils.queryNumEntries(mDatabase, RssDatabaseHelper.TABLE_NAME, 
+				RssDatabaseHelper.COLUMN_LINK + "=?", new String[] { r.getLink() }) <= 0)
 			insertToOpenDatabase(r, feed);
 		}
 		
@@ -161,7 +164,7 @@ public class RssDataSource {
 		
 		v.put(RssDatabaseHelper.COLUMN_DESCRIPTION, description);		
 		
-		int r = mDatabase.update(RssDatabaseHelper.TABLE_NAME, v, 
+		mDatabase.update(RssDatabaseHelper.TABLE_NAME, v, 
 				RssDatabaseHelper.COLUMN_FEED_NAME + "=? AND " + RssDatabaseHelper.COLUMN_LINK + "=?" , // WHERE 
 				new String[] { feed, link }); //WHERE parameters
 		

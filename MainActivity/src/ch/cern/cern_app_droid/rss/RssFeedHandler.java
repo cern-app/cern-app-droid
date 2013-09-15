@@ -41,6 +41,7 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 	RssHandlerListener mListener;
 	boolean mIsDownloadingFeed;
 	boolean mIsDownloadingImages;
+	boolean mIsDownloadingDescriptions;
 	String mFeedUrl;
 	RssDataSource mDataSource;
 	Context context;
@@ -52,6 +53,7 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 
 	private RssFeedRetriever mRetriever;
 	private DownloadImageTask mImagesDownloader;
+	private DownloadReadability mReadabilityRetriever;
 
 	public void setRssHandlerListener(RssHandlerListener listener) {
 		mListener = listener;
@@ -60,12 +62,13 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 	public RssFeedHandler(String url) {
 		mIsDownloadingFeed = false;
 		mIsDownloadingImages = false;
+		mIsDownloadingDescriptions = false;
 		cancel = false;
 		mFeedUrl = url;
 	}
 
 	public boolean isWorking() {
-		return (mIsDownloadingFeed || mIsDownloadingImages);
+		return (mIsDownloadingFeed || mIsDownloadingImages || mIsDownloadingDescriptions);
 	}
 
 	public void startWork(Context context) {
@@ -94,6 +97,9 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 		if (mImagesDownloader != null) {
 			mImagesDownloader.cancel(true);
 		}
+		if (mReadabilityRetriever != null) {
+			mReadabilityRetriever.cancel(true);
+		}
 	}
 
 	private void loadRss() {
@@ -114,20 +120,22 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 
 			ArrayList<RssItem> items = new ArrayList<RssItem>();
 			List<RssItemBean> readItems = result.getItems();
+			ArrayList<String> miniatureUrls = new ArrayList<String>();
 
 			int pos = 0;
 			for (RssItemBean item : readItems) {
 				items.add(new RssItem(item));
+				miniatureUrls.add(getFirstImageLink(item.getDescription()));
 				mLinkToPositionMap.put(item.getLink(), pos);
 				++pos;
 			}
 
-			queueImageJobs(items);
+			queueImageJobs(items, miniatureUrls);
 			mDataSource.replaceFeed(items, mFeedUrl);
 			mListener.onListUpdated(items);
 			
-			DownloadReadability readability = new DownloadReadability();
-			readability.execute(items);
+			mReadabilityRetriever = new DownloadReadability();
+			mReadabilityRetriever.execute(items);
 		}
 	}
 
@@ -139,7 +147,7 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 		}
 	}
 
-	private void queueImageJobs(List<RssItem> items) {
+	private void queueImageJobs(List<RssItem> items, List<String> miniatureUrls) {
 		if (cancel)
 			return;
 
@@ -149,7 +157,7 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 		for (RssItem item : items) {
 			++i;
 			if (item.getMiniature() == null) {
-				String imageUrl = getFirstImageLink(item.getDescription());
+				String imageUrl = miniatureUrls.get(i);
 				if (imageUrl != null) {
 					images.add(imageUrl);
 					mLinkToPositionMap.put(imageUrl, i);
@@ -157,8 +165,7 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 				}
 			}
 		}
-		mIsDownloadingFeed = (images.size() != 0);
-		if (mIsDownloadingFeed) {
+		if (!cancel) {
 			mImagesDownloader = new DownloadImageTask();
 			mImagesDownloader.execute(images.toArray(new String[] {}));
 		}
@@ -186,6 +193,7 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 
 		@Override
 		protected Void doInBackground(String... urls) {
+			Log.d(TAG, "Urls length: " + urls.length);
 			for (String url : urls) {
 
 				if (this.isCancelled())
@@ -205,7 +213,7 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 					bitmap = BitmapFactory.decodeStream(in, null, options);
 
 				} catch (Exception e) {
-					Log.e("Error", e.getMessage());
+					Log.e(TAG, e.getMessage());
 					e.printStackTrace();
 				}
 				bitmapCache.put(url, bitmap);
@@ -222,7 +230,6 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 			Bitmap image = bitmapCache.get(url);
 			mDataSource.updateItem(mFeedUrl, mImageLinkToItemLinkMap.get(url),
 					image, null);
-			// Log.d(TAG, "pos: " + mLinkToPositionMap.get(url));
 			mListener.onImageDownloaded(mLinkToPositionMap.get(url), image);
 		}
 
@@ -273,7 +280,13 @@ public class RssFeedHandler implements RssFeedRetrieverListener {
 			int size = list.size();
 			RssItem item;
 			for (int i = 0; i < size; i++) {
+				if (this.isCancelled()) {
+					return null;
+				}
 				item = list.get(i);
+				if (!item.getDescription().isEmpty()) {
+					continue;
+				}
 				String link = item.getLink();
 				String simple = getContent(link);
 				if (simple.isEmpty()) {
