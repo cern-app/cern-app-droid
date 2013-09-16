@@ -35,8 +35,8 @@ import ch.cern.cern_app_droid.rss.RssHandlerListener.RssHandlerError;
 public class RssFeedHandler implements RssFeedRetrieverListener {
 
 	private static final String TAG = "RssFeedHandler";
-	private static final String READABILITY_SERVICE = "";
-	private static final String THUMBNAIL_SERVICE = "";
+	private static final String THUMBNAIL_SERVICE="";
+	private static final String READABILITY_SERVICE="";
 
 	RssHandlerListener mListener;
 	boolean mIsDownloadingFeed;

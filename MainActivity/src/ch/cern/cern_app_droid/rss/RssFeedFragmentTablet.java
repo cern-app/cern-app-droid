@@ -205,7 +205,7 @@ public class RssFeedFragmentTablet extends Fragment implements RssHandlerListene
 						int leftMargin = imageV.getWidth() + 10;
 						Log.d(TAG, String.format("item.title: %s, margin: %d", item.getTitle(), leftMargin));
 						SpannableString ss = new SpannableString(descV.getText());
-						ss.setSpan(new MyLeadingMarginSpan2(3, leftMargin), 0, ss.length(), 0);
+						ss.setSpan(new MyLeadingMarginSpan2(8, leftMargin), 0, ss.length(), 0);
 						descV.setText(ss);
 					}
 				    descV.setMaxLines(

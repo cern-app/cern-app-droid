@@ -47,7 +47,6 @@ public class RssFeedFragmentPhone extends ListFragment implements OnItemClickLis
 		setListAdapter(mAdapter);
 		
 		mUrl = getArguments().getString(RssHelper.URL);
-		Log.d(TAG, "onAttach(); mUrl = " + mUrl);
 		mRssFeedHandler = new RssFeedHandler(mUrl);
 		mRssFeedHandler.setRssHandlerListener(this);
 		mRssFeedHandler.startWork(activity);
@@ -73,10 +72,6 @@ public class RssFeedFragmentPhone extends ListFragment implements OnItemClickLis
 				holder.date = (TextView) v.findViewById(R.id.rss_row_Time);
 				holder.img = (ImageView) v.findViewById(R.id.rss_row_Image);
 				v.setTag(holder);
-			}
-
-			if (position == 0) {
-				Log.d(TAG, "getView");
 			}
 
 			ViewHolder holder = (ViewHolder) v.getTag();

@@ -36,8 +36,8 @@
     
     <ImageView
         android:id="@+id/rss_tablet_cell_Image"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_alignParentLeft="true"
         android:layout_below="@id/rss_tablet_cell_Time"
         android:scaleType="fitCenter"
