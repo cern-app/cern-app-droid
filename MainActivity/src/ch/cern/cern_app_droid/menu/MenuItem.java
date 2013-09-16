@@ -27,6 +27,10 @@ public class MenuItem {
 		items = new ArrayList<MenuItem>();
 	}
 	
+	public String getTitle() {
+		return title;
+	}
+	
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();

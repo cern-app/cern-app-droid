@@ -99,6 +99,7 @@ public class MainActivity extends FragmentActivity  {
 		if (item != null && item.Action != null && item.Action.getFragment(this) != null) {
 			setProgressBarIndeterminateVisibility(false);
 			getSupportFragmentManager().beginTransaction().replace(R.id.main_contentFrame, item.Action.getFragment(this)).commit();
+			getActionBar().setTitle(item.getTitle());
 			mMenu.toggle();
 		}
 		

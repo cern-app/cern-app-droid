@@ -3,6 +3,7 @@ package ch.cern.cern_app_droid.menu;
 import java.util.ArrayList;
 
 import android.content.Context;
+import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import ch.cern.cern_app_droid.static_information.StaticInformationCard;
@@ -15,13 +16,15 @@ public class StaticInformationAction implements ItemAction {
 	private ArrayList<StaticInformationCard> mCardsList;
 	private StaticInformationFragment mFragment;
 
+	private String mTitle;
+
 	@Override
 	public Fragment getFragment(Context context) {
 		Log.d(TAG, "Requested fragment (getFragment())");
 		
-		
 		mFragment = new StaticInformationFragment();
 		mFragment.setCardList(mCardsList);
+		
 		return mFragment;
 	}
 	
@@ -32,8 +35,9 @@ public class StaticInformationAction implements ItemAction {
 		}
 	}
 	
-	public StaticInformationAction(ArrayList<StaticInformationCard> cardsList) {
+	public StaticInformationAction(ArrayList<StaticInformationCard> cardsList){//, String title) {
 		setCardList(cardsList);
+//		mTitle = title;
 	}
 	
 	public StaticInformationAction() {}

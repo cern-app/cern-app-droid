@@ -18,6 +18,8 @@ import ch.cern.cern_app_droid.R;
 public class StaticInformationFragment extends Fragment {
 	
 	private static final String TAG = "StaticInformationFragment";
+
+	public static final String TITLE = "title";
 	
 	ArrayList<StaticInformationCard> mCardsList;
 	PagerAdapter mAdapter;
