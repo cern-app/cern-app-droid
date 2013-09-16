@@ -21,7 +21,7 @@ public class RssFeedAction implements ItemAction {
 	@Override
 	public Fragment getFragment(Context context) {
 		if (mFragment == null) {
-			if (context.getResources().getBoolean(R.bool.isTablet)) {
+			if (true){// context.getResources().getBoolean(R.bool.isTablet)) {
 				mFragment = new RssFeedFragmentTablet();
 			} else {
 				mFragment = new RssFeedFragmentPhone();

@@ -6,8 +6,10 @@ import java.util.List;
 import com.triposo.barone.EllipsizingTextView;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
@@ -16,7 +18,9 @@ import android.text.SpannableString;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
+import android.view.View.OnLongClickListener;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
@@ -128,55 +132,60 @@ public class RssFeedFragmentTablet extends Fragment implements RssHandlerListene
 				holder. dateRB = (TextView)  v.findViewById(R.id.rss_item_tablet_bottom_right).findViewById(R.id.rss_tablet_cell_Time);
 				holder.  imgRB = (ImageView)  v.findViewById(R.id.rss_item_tablet_bottom_right).findViewById(R.id.rss_tablet_cell_Image);
 				
-				holder.position = position;
-				
 				v.setTag(holder);
 			} else {
 				v = mConvertedViews.remove(0);
 			}
 		
+			
 			ViewHolder holder = (ViewHolder) v.getTag();
+			View cell;
 			RssItem item1, item2, item3, item4;
 			item1 = mItems.get(4*position);
+			cell = v.findViewById(R.id.rss_item_tablet_top_left);
 			if (item1.getDescription().isEmpty()) {
 				v.findViewById(R.id.rss_item_tablet_top_left).findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.VISIBLE);
 			} else {
 				v.findViewById(R.id.rss_item_tablet_top_left).findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.GONE);
 			}
-			fillView(item1, holder.titleLT, holder.descLT, holder.dateLT, holder.imgLT); // , holder.imgLT);
+			
+			fillView(item1, holder.titleLT, holder.descLT, holder.dateLT, holder.imgLT, cell);
 			if (4*position + 1 < mItems.size()) {
+				cell = v.findViewById(R.id.rss_item_tablet_top_right);
 				item2 = mItems.get(4*position+1);
-				v.findViewById(R.id.rss_item_tablet_top_right).setVisibility(View.VISIBLE);
+				cell.setVisibility(View.VISIBLE);
 				if (item2.getDescription().isEmpty()) {
-					v.findViewById(R.id.rss_item_tablet_top_right).findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.VISIBLE);
+					cell.findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.VISIBLE);
 				} else {
-					v.findViewById(R.id.rss_item_tablet_top_right).findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.GONE);
+					cell.findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.GONE);
 				}
-				fillView(item2, holder.titleRT, holder.descRT, holder.dateRT, holder.imgRT);
+				fillView(item2, holder.titleRT, holder.descRT, holder.dateRT, holder.imgRT, cell);
 			} else {
 				v.findViewById(R.id.rss_item_tablet_top_right).setVisibility(View.INVISIBLE);
 			}
 			if (4*position + 2 < mItems.size()) {
 				item3 = mItems.get(4*position+2);
-				v.findViewById(R.id.rss_item_tablet_bottom_left).setVisibility(View.VISIBLE);
+				cell = v.findViewById(R.id.rss_item_tablet_bottom_left);
+				cell.setVisibility(View.VISIBLE);
 				if (item3.getDescription().isEmpty()) {
-					v.findViewById(R.id.rss_item_tablet_bottom_left).findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.VISIBLE);
+					cell.findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.VISIBLE);
 				} else {
-					v.findViewById(R.id.rss_item_tablet_bottom_left).findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.GONE);
+					cell.findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.GONE);
 				}
-				fillView(item3, holder.titleLB, holder.descLB, holder.dateLB, holder.imgLB);
+				fillView(item3, holder.titleLB, holder.descLB, holder.dateLB, holder.imgLB, cell);
 			} else {
 				v.findViewById(R.id.rss_item_tablet_bottom_left).setVisibility(View.INVISIBLE);
 			}
 			if (4*position + 3 < mItems.size()) {
+				cell = v.findViewById(R.id.rss_item_tablet_bottom_right);
 				item4 = mItems.get(4*position+3);
-				v.findViewById(R.id.rss_item_tablet_bottom_right).setVisibility(View.VISIBLE);
+				cell.setVisibility(View.VISIBLE);
 				if (item4.getDescription().isEmpty()) {
-					v.findViewById(R.id.rss_item_tablet_bottom_right).findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.VISIBLE);
+					cell.findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.VISIBLE);
 				} else {
-					v.findViewById(R.id.rss_item_tablet_bottom_right).findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.GONE);
+					cell.findViewById(R.id.rss_tablet_cell_progressBar).setVisibility(View.GONE);
 				}
-				fillView(item4, holder.titleRB, holder.descRB, holder.dateRB, holder.imgRB);
+				fillView(item4, holder.titleRB, holder.descRB, holder.dateRB, holder.imgRB, cell);
 			} else {
 				v.findViewById(R.id.rss_item_tablet_bottom_right).setVisibility(View.INVISIBLE);
 			}			
@@ -184,7 +193,7 @@ public class RssFeedFragmentTablet extends Fragment implements RssHandlerListene
 			return v;
 		}
 		
-		private void fillView(final RssItem item, TextView titleV, final TextView descV, TextView dateV, final ImageView imageV) {
+		private void fillView(final RssItem item, TextView titleV, final TextView descV, TextView dateV, final ImageView imageV, View cell) {
 			titleV.setText(item.getTitle());
 			dateV.setText(item.getPubDate().toLocaleString());
 			descV.setText(item.getDescription());
@@ -203,7 +212,6 @@ public class RssFeedFragmentTablet extends Fragment implements RssHandlerListene
 				public void onGlobalLayout() {
 					if (hasMiniature) {
 						int leftMargin = imageV.getWidth() + 10;
-						Log.d(TAG, String.format("item.title: %s, margin: %d", item.getTitle(), leftMargin));
 						SpannableString ss = new SpannableString(descV.getText());
 						ss.setSpan(new MyLeadingMarginSpan2(8, leftMargin), 0, ss.length(), 0);
 						descV.setText(ss);
@@ -214,6 +222,22 @@ public class RssFeedFragmentTablet extends Fragment implements RssHandlerListene
 				    imageV.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 				}
 			});
+			
+			cell.setOnClickListener(new OnClickListener() {				
+				@Override
+				public void onClick(View v) {
+					Log.d(TAG, "onClick insinde");
+					if (Utils.isNetworkAvailable(getActivity())) {
+						String url = item.getLink();
+						Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+						startActivity(browserIntent);
+					} else {
+						FeedItemWebView webViewFragment = new FeedItemWebView();
+						webViewFragment.setContent(item);
+						getFragmentManager().beginTransaction().replace(R.id.main_contentFrame, webViewFragment).addToBackStack("view").commit();
+					}
+				}
+			});
 		}
 		
 		 class ViewHolder {
@@ -221,7 +245,6 @@ public class RssFeedFragmentTablet extends Fragment implements RssHandlerListene
 			 TextView descLT; TextView descRT; TextView descLB; TextView descRB; 
 			 TextView dateLT; TextView dateRT; TextView dateLB; TextView dateRB;
 			 ImageView imgLT; ImageView imgRT; ImageView imgLB; ImageView imgRB;
-			 int position;
 		 }
 	}
 
@@ -267,6 +290,9 @@ public class RssFeedFragmentTablet extends Fragment implements RssHandlerListene
 	
 	@Override
 	public void onDetach() {
+		while (getFragmentManager().getBackStackEntryCount() > 0) {
+			getFragmentManager().popBackStack();
+		}
 		mRssFeedHandler.cancel();
 		super.onDetach();
 	}
