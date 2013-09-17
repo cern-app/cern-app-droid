@@ -219,7 +219,12 @@ public class RssFeedFragmentTablet extends Fragment implements RssHandlerListene
 				    descV.setMaxLines(
 				    		 (descV.getHeight() - descV.getPaddingBottom() - descV.getPaddingTop())
 				    		 /descV.getLineHeight());
-				    imageV.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+				    try {
+				    	imageV.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+				    } catch (NoSuchMethodError x) {
+				    	imageV.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+				    }
+				    
 				}
 			});
 			
